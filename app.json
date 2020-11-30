@@ -3,7 +3,7 @@
     "name": "nymph_of_gladia_m",
     "slug": "nymph_of_gladia_m",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
