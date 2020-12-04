@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, View, Text, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import * as api from '../api/Auth'
 
 export default function Intro({ navigation }: any) {
   const [email, setEmail] = React.useState('')
@@ -27,7 +28,8 @@ export default function Intro({ navigation }: any) {
         <Button
           title="log in"
           onPress={() => {
-            // navigation.navigate('')
+            console.log(email,password)
+            api.signin(email, password, navigation)
           }}
         />
       </View>
