@@ -28,7 +28,6 @@ export default function Intro({ navigation }: any) {
         <Button
           title="log in"
           onPress={() => {
-            console.log(email,password)
             api.signin(email, password, navigation)
           }}
         />
