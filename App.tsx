@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import store from './redux';
 import * as socketActions from './redux/Socket';
+import * as Update from "expo-updates";
 
 const Stack = createStackNavigator();
 
@@ -24,7 +25,7 @@ function App() {
         if (!store.getState().Socket.socketId) {
           store.dispatch(socketActions.set_socket_id({ socketId }));
         } else if (store.getState().Socket.socketId !== socketId) {
-          navigate('Intro')
+          Update.reloadAsync()
           // 이미 접속중인 아이디입니다.
         }
       }
