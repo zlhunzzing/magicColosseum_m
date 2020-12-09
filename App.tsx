@@ -30,6 +30,10 @@ function App() {
         }
       }
     })
+
+    socketServer.on('rooms', (rooms: any) => {
+      store.dispatch(socketActions.set_rooms({ rooms }));
+    });
   }, [])
 
   return (
