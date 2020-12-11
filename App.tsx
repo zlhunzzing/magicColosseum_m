@@ -11,6 +11,7 @@ const Stack = createStackNavigator();
 /* pages */
 import Intro from './page/Intro'
 import Home from './page/Home'
+import Room from './page/Room'
 
 function App() {
   const navigationRef: any = React.createRef();
@@ -42,6 +43,7 @@ function App() {
         <Stack.Navigator initialRouteName="Intro" headerMode="none" >
           <Stack.Screen name="Intro" component={Intro} />
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Room" component={Room} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

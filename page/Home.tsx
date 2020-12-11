@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import store from '../redux';
 import { CustomButton } from '../component/CustumButton'
 import { TextInput } from 'react-native-gesture-handler';
+import * as api from '../api/Room'
 
-export default function Home() {
+export default function Home({ navigation }: any) {
   const socketServer = store.getState().Socket.socketServer
   const userId = useSelector((state: any) => state.Auth.userId);
   const rooms = useSelector((state: any) => state.Socket.rooms);
@@ -60,7 +61,8 @@ export default function Home() {
             <CustomButton
               title='방만들기'
               onPress={() => {
-                // api...
+                api.createRoom(roomname, navigation)
+                setModalVisible(false)
               }}
             ></CustomButton>
             <View style={{ margin: 3 }}></View>
