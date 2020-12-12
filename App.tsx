@@ -35,6 +35,12 @@ function App() {
     socketServer.on('rooms', (rooms: any) => {
       store.dispatch(socketActions.set_rooms({ rooms }));
     });
+
+    socketServer.on('getRoomInfo', (roomInfo: any) => {
+      if (store.getState().Socket.roomId === roomInfo.id) {
+        store.dispatch(socketActions.set_room_info({ roomInfo }));
+      }
+    });
   }, [])
 
   return (
