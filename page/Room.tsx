@@ -3,12 +3,18 @@ import { View, StyleSheet, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import store from '../redux';
 import * as socketActions from '../redux/Socket'
+import { CustomButton } from '../component/CustumButton'
 
-export default function Room({ route }: any) {
+export default function Room({ route, navigation }: any) {
   const socketServer = store.getState().Socket.socketServer
   const roomId = route.params[0];
   const userId = useSelector((state: any) => state.Auth.userId);
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
+
+  async function outRoom() {
+    await socketServer.emit('outRoom', roomId, userId);
+    navigation.navigate('Home');
+  }
 
   React.useEffect(() => {
     store.dispatch(socketActions.set_room_id({ roomId }))
@@ -17,11 +23,13 @@ export default function Room({ route }: any) {
 
   return roomInfo ? (
     <View style={style.container}>
-      <View style={style.halfContainer}>
+      <View style={style.header}>
         <Text style={style.roomInfo}>
           {roomId ? roomId: null}번방 ({roomInfo.headcount}/{roomInfo.maxHeadcount}) {roomInfo.roomname}
         </Text>
         <View style={{ borderBottomWidth: 1 }}></View>
+      </View>
+      <View style={style.halfContainer}>
         <View style={{ flexDirection: 'row' }}>
           <View style={style.seat}>
             <Text style={style.userInfo}>{roomInfo.player1name}</Text>
@@ -35,7 +43,13 @@ export default function Room({ route }: any) {
           </View>
         </View>
       </View>
-      {/* <View style={style.halfContainer}></View> */}
+      <View style={style.halfContainer}>
+        <CustomButton
+          title="방나가기"
+          onPress={() => outRoom()}
+          style={style.exit}
+        ></CustomButton>
+      </View>
     </View>
   ) : (
     <Text>여기는 {roomId ? roomId: null}번방 입니다.</Text>
@@ -48,6 +62,10 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
+  },
+  header: {
+    flex: 0.4,
+    width: 450,
   },
   halfContainer: {
     flex: 1,
@@ -69,9 +87,17 @@ const style = StyleSheet.create({
   userInfo: {
     color: 'black',
   },
-  select: {
+  // select: {
+  //   borderWidth: 1,
+  //   width: 100,
+  //   height: 140,
+  // },
+  exit: {
     borderWidth: 1,
+    margin: 10,
     width: 100,
-    height: 140,
+    height: 60,
+    alignItems: 'center',
+    backgroundColor: 'gray'
   }
 });
