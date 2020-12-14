@@ -13,6 +13,15 @@ export default function Home({ navigation }: any) {
   const [modalVisible, setModalVisible] = React.useState(false)
   const [roomname, setRoomname] = React.useState('')
 
+  function createRoom() {
+    api.createRoom(roomname, navigation)
+    socketServer.emit('rooms');
+  }
+  function inRoom(roomId: number) {
+    api.inRoom(roomId, navigation);
+    socketServer.emit('rooms');
+  }
+
   React.useEffect(() => {
     socketServer.emit('socketCheck', userId);
     socketServer.emit('rooms');
@@ -27,7 +36,7 @@ export default function Home({ navigation }: any) {
             key={room.id}
             title={`${room.id}번방/(${room.headcount}/${room.maxHeadcount})/${room.roomname}`}
             onPress={() => {
-              // api...
+              inRoom(room.id)
             }}
             style={style.room}
           ></CustomButton>
@@ -61,16 +70,16 @@ export default function Home({ navigation }: any) {
             <CustomButton
               title='방만들기'
               onPress={() => {
-                api.createRoom(roomname, navigation)
                 setModalVisible(false)
+                createRoom()
               }}
             ></CustomButton>
             <View style={{ margin: 3 }}></View>
             <CustomButton
               title='취소'
               onPress={() => {
-                setRoomname('')
                 setModalVisible(false)
+                setRoomname('')
               }}
             ></CustomButton>
           </View>

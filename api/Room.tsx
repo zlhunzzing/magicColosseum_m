@@ -22,3 +22,20 @@ export function createRoom(roomname: string, navigation: any) {
     })
     .catch((err) => console.log(err.response));
 }
+
+export function inRoom(roomId: number, navigation: any) {
+  return axios
+    .post(
+      `http://${serverIp}/user/greenroom/${roomId}`,
+      {},
+      {
+        headers: {
+          Authorization: store.getState().Auth.token,
+        },
+      },
+    )
+    .then((res) => {
+      navigation.navigate('Room', [roomId]);
+    })
+    .catch((err) => console.log(err.response));
+}
