@@ -1,19 +1,29 @@
 import * as React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Image } from 'react-native';
 import { useSelector } from 'react-redux';
 import store from '../redux';
 import * as socketActions from '../redux/Socket'
 import { CustomButton } from '../component/CustumButton'
+import * as battleActions from '../redux/Battle';
 
 export default function Room({ route, navigation }: any) {
   const socketServer = store.getState().Socket.socketServer
   const roomId = route.params[0];
   const userId = useSelector((state: any) => state.Auth.userId);
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
+  const [character, setCharacter] = React.useState('');
 
-  async function outRoom() {
-    await socketServer.emit('outRoom', roomId, userId);
+  function outRoom() {
+    socketServer.emit('outRoom', roomId, userId);
     navigation.navigate('Home');
+  }
+  function select(name: string) {
+    if (roomInfo.player1 === userId) {
+      store.dispatch(battleActions.select_player1({ name }));
+    } else {
+      store.dispatch(battleActions.select_player2({ name }));
+    }
+    socketServer.emit('select', roomId, userId, name);
   }
 
   React.useEffect(() => {
@@ -30,17 +40,80 @@ export default function Room({ route, navigation }: any) {
         <View style={{ borderBottomWidth: 1 }}></View>
       </View>
       <View style={style.halfContainer}>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={style.seat}>
-            <Text style={style.userInfo}>{roomInfo.player1name}</Text>
-            <Text style={style.userInfo}>{roomInfo.player1Character ? `${roomInfo.player1Character}` : ''}</Text>
-            <Text style={style.userInfo}>{roomInfo.player1Ready ? '준비완료' : ''}</Text>
+        <View style={style.seat}>
+          <Text style={style.userInfo}>{roomInfo.player1name}{roomInfo.host}</Text>
+          <Text style={style.userInfo}>{roomInfo.player1Character ? `${roomInfo.player1Character}` : ''}</Text>
+          <Text style={style.userInfo}>
+            {roomInfo.host === roomInfo.player1
+              ? '방장'
+              : roomInfo.player1
+              ? roomInfo.player1Ready
+                ? '준비완료'
+                : '준비안됨'
+              : ''}
+          </Text>
+          <Image
+            style={{ width: 70, height: 70 }}
+            source={roomInfo.player1Character === '세키'
+              ? require('../image/characterImg/Seki.gif')
+              : roomInfo.player1Character === '레티'
+                ? require('../image/characterImg/Reti.gif')
+                : null}
+          ></Image>
+        </View>
+        <View style={style.seat}>
+          <Text style={style.userInfo}>{roomInfo.player2name}</Text>
+          <Text style={style.userInfo}>{roomInfo.player2Character ? `${roomInfo.player2Character}` : ''}</Text>
+          <Text style={style.userInfo}>
+            {roomInfo.host === roomInfo.player2
+              ? '방장'
+              : roomInfo.player2
+              ? roomInfo.player2Ready
+                ? '준비완료'
+                : '준비안됨'
+              : ''}
+          </Text>
+          <Image
+            style={{ width: 70, height: 70 }}
+            source={roomInfo.player2Character === '세키'
+              ? require('../image/characterImg/Seki.gif')
+              : roomInfo.player2Character === '레티'
+                ? require('../image/characterImg/Reti.gif')
+                : null}
+          ></Image>
+        </View>
+        <View style={style.select}>
+          <Text>캐릭터 선택</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <View>
+              <CustomButton
+                title="세키"
+                onPress={() => {
+                  setCharacter('세키')
+                  select('세키')
+                }}
+                style={style.selectButton}
+              ></CustomButton>
+            </View>
+            <View>
+              <CustomButton
+                title="레티"
+                onPress={() => {
+                  setCharacter('레티')
+                  select('레티')
+                }}
+                style={style.selectButton}
+              ></CustomButton>
+            </View>
           </View>
-          <View style={style.seat}>
-            <Text style={style.userInfo}>{roomInfo.player2name}</Text>
-            <Text style={style.userInfo}>{roomInfo.player2Character ? `${roomInfo.player2Character}` : ''}</Text>
-            <Text style={style.userInfo}>{roomInfo.player2Ready ? '준비완료' : ''}</Text>
-          </View>
+          <Image
+            style={{ width: 165, height: 55 }}
+            source={character === '세키'
+              ? require('../image/characterImg/01_info.png')
+              : character === '레티'
+                ? require('../image/characterImg/02_info.png')
+                : null}
+          ></Image>
         </View>
       </View>
       <View style={style.halfContainer}>
@@ -70,6 +143,7 @@ const style = StyleSheet.create({
   halfContainer: {
     flex: 1,
     width: 450,
+    flexDirection: 'row'
   },
   roomInfo: {
     color: 'black',
@@ -87,11 +161,6 @@ const style = StyleSheet.create({
   userInfo: {
     color: 'black',
   },
-  // select: {
-  //   borderWidth: 1,
-  //   width: 100,
-  //   height: 140,
-  // },
   exit: {
     borderWidth: 1,
     margin: 10,
@@ -99,5 +168,18 @@ const style = StyleSheet.create({
     height: 60,
     alignItems: 'center',
     backgroundColor: 'gray'
+  },
+  select: {
+    alignItems: 'center',
+    margin: 10,
+    // borderWidth: 1,
+    width: 170,
+    height: 130,
+  },
+  selectButton: {
+    margin: 3,
+    borderWidth: 2,
+    width: 40,
+    height: 40
   }
 });

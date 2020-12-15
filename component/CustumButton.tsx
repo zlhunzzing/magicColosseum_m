@@ -4,7 +4,7 @@ import { TouchableOpacity, Text } from 'react-native';
 export const CustomButton = ({ title, onPress, style }: any) => (
   <TouchableOpacity
     onPress={onPress}
-    style={{ justifyContent: 'center', ...style }}
+    style={{ justifyContent: 'center', alignItems: 'center', ...style }}
   >
     <Text>{title}</Text>
   </TouchableOpacity>
