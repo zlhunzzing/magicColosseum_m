@@ -12,6 +12,7 @@ export default function Room({ route, navigation }: any) {
   const userId = useSelector((state: any) => state.Auth.userId);
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const [character, setCharacter] = React.useState('');
+  const [isReady, setIsReady] = React.useState(false)
 
   function outRoom() {
     socketServer.emit('outRoom', roomId, userId);
@@ -24,6 +25,13 @@ export default function Room({ route, navigation }: any) {
       store.dispatch(battleActions.select_player2({ name }));
     }
     socketServer.emit('select', roomId, userId, name);
+  }
+  function ready() {
+    socketServer.emit('ready', roomId, userId);
+    setIsReady(!isReady)
+  }
+  function gamestart() {
+    socketServer.emit('gamestart', roomId, userId);
   }
 
   React.useEffect(() => {
@@ -117,6 +125,25 @@ export default function Room({ route, navigation }: any) {
         </View>
       </View>
       <View style={style.halfContainer}>
+        <CustomButton
+          title={roomInfo.host === userId
+            ? '게임시작'
+            : isReady
+              ? '준비해제'
+              : '준비하기'}
+          onPress={() => {
+            if (character) {
+              if (roomInfo.host === userId) {
+                gamestart();
+              } else {
+                ready();
+              }
+            } else {
+              alert('캐릭터를 선택해주세요.');
+            }
+          }}
+          style={style.exit}
+        ></CustomButton>
         <CustomButton
           title="방나가기"
           onPress={() => outRoom()}
