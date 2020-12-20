@@ -8,6 +8,10 @@ export default function SetTurn() {
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
   const [hand, setHand] = React.useState([CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE])
+  const userId = useSelector((state: any) => state.Auth.userId);
+  const [usedMana, setUsedMana] = React.useState(
+    roomInfo.player1 === userId ? player1.mp : player2.mp,
+  );
 
   return (
     <View style={style.container}>
@@ -15,31 +19,36 @@ export default function SetTurn() {
         <View style={style.player1info}>
           <Text>NAME: {roomInfo.player1Character + `(${roomInfo.player1name})`}</Text>
           <Text>HP: {player1.hp}</Text>
-          <Text>MP: {player1.mp}</Text>
+          <Text>
+            MP: {roomInfo.player1 === userId ? `${usedMana}/` : null}{player1.mp}
+          </Text>
         </View>
         <View style={style.player2info}>
           <Text>NAME: {roomInfo.player1Character + `(${roomInfo.player1name})`}</Text>
           <Text>HP: {player2.hp}</Text>
-          <Text>MP: {player2.mp}</Text>
+          <Text>
+            MP: {roomInfo.player2 === userId ? `${usedMana}/` : null}{player1.mp}
+          </Text>
         </View>
       </View>
       <View style={style.deck}>
         {player1.deck.slice(0, 5).map((card:any, id: number) => (
           <TouchableHighlight
+            key={id}
             onPress={() => {
               for(let e in hand) {
-                if(hand[e].type === 'NONE') {
+                if(hand[e].type === 'NONE' && usedMana >= card.cost) {
                   hand[e] = card;
                   setHand(hand.slice(0, 3))
+                  setUsedMana(usedMana - card.cost);
                   break;
                 }
               }
             }}
           >
           <Image
-            key={id}
             style={style.card}
-            source={card.image}
+            source={usedMana < card.cost ? card.darkImage : card.image}
           ></Image>
         </TouchableHighlight>
         ))}
@@ -47,20 +56,21 @@ export default function SetTurn() {
       <View style={style.deck}>
         {player1.deck.slice(5, 10).map((card:any, id: number) => (
           <TouchableHighlight
+            key={id}
             onPress={() => {
               for(let e in hand) {
-                if(hand[e].type === 'NONE') {
+                if(hand[e].type === 'NONE' && usedMana >= card.cost) {
                   hand[e] = card;
                   setHand(hand.slice(0, 3))
+                  setUsedMana(usedMana - card.cost);
                   break;
                 }
               }
             }}
           >
             <Image
-              key={id}
               style={style.card}
-              source={card.image}
+              source={usedMana < card.cost ? card.darkImage : card.image}
             ></Image>
           </TouchableHighlight>
         ))}
@@ -68,14 +78,15 @@ export default function SetTurn() {
       <View style={style.deck}>
         {hand.map((card: any, id: number) => (
           <TouchableHighlight
+            key={id}
             onPress={() => {
               if(card.type !== 'NONE') {
                 hand[id] = CARD_DICTIONARY.NONE;
                 setHand(hand.slice(0, 3))
+                setUsedMana(usedMana + card.cost);
               }
           }}>
             <Image
-              key={id}
               style={style.card}
               source={card.image}
             ></Image>

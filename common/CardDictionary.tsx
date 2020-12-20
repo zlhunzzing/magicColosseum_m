@@ -360,6 +360,7 @@ const CARD_DICTIONARY = {
     range: cardRanges.noneRange,
     position: 'card4',
     image: imageRequires.SEKI_MANA_UP,
+    darkImage: imageRequires.SEKI_MANA_UP,
     actionImage: imageRequires.SEKI_MANA_UP_ACTION,
   },
   RETI_MANA_UP: {
@@ -371,6 +372,7 @@ const CARD_DICTIONARY = {
     range: cardRanges.noneRange,
     position: 'card4',
     image: imageRequires.RETI_MANA_UP,
+    darkImage: imageRequires.RETI_MANA_UP,
     actionImage: imageRequires.RETI_MANA_UP_ACTION,
   },
 };
