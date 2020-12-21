@@ -12,6 +12,14 @@ export default function SetTurn() {
   const [usedMana, setUsedMana] = React.useState(
     roomInfo.player1 === userId ? player1.mp : player2.mp,
   );
+  function checkHand(card: any) {
+    for (let i = 0; i < hand.length; i++) {
+      if (hand[i].id === card.id) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   return (
     <View style={style.container}>
@@ -37,7 +45,10 @@ export default function SetTurn() {
             key={id}
             onPress={() => {
               for(let e in hand) {
-                if(hand[e].type === 'NONE' && usedMana >= card.cost) {
+                if(hand[e].type === 'NONE' &&
+                  usedMana >= card.cost &&
+                  !checkHand(card)
+                ) {
                   hand[e] = card;
                   setHand(hand.slice(0, 3))
                   setUsedMana(usedMana - card.cost);
@@ -45,9 +56,10 @@ export default function SetTurn() {
                 }
               }
             }}
+            activeOpacity={checkHand(card) ? 0 : 1}
           >
           <Image
-            style={style.card}
+            style={checkHand(card) ? { ...style.card, opacity: 0 } : style.card}
             source={usedMana < card.cost ? card.darkImage : card.image}
           ></Image>
         </TouchableHighlight>
@@ -59,7 +71,10 @@ export default function SetTurn() {
             key={id}
             onPress={() => {
               for(let e in hand) {
-                if(hand[e].type === 'NONE' && usedMana >= card.cost) {
+                if(hand[e].type === 'NONE' &&
+                  usedMana >= card.cost &&
+                  !checkHand(card)
+                ) {
                   hand[e] = card;
                   setHand(hand.slice(0, 3))
                   setUsedMana(usedMana - card.cost);
@@ -67,9 +82,10 @@ export default function SetTurn() {
                 }
               }
             }}
+            activeOpacity={checkHand(card) ? 0 : 1}
           >
             <Image
-              style={style.card}
+              style={checkHand(card) ? { ...style.card, opacity: 0 } : style.card}
               source={usedMana < card.cost ? card.darkImage : card.image}
             ></Image>
           </TouchableHighlight>
