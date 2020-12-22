@@ -14,6 +14,7 @@ import Intro from './page/Intro'
 import Home from './page/Home'
 import Room from './page/Room'
 import SetTurn from './page/SetTurn'
+import Field from './page/Field';
 
 function App() {
   const navigationRef: any = React.createRef();
@@ -59,6 +60,18 @@ function App() {
         navigate('SetTurn');
       }
     });
+
+    socketServer.on('setTurn', (roomId: number, roomInfo: any) => {
+      console.log("set", roomInfo)
+      if (
+        store.getState().Socket.roomInfo &&
+        roomId === store.getState().Socket.roomInfo.id
+      ) {
+        if (roomInfo.player1set && roomInfo.player2set) {
+          navigate('Field')
+        }
+      }
+    });
   }, [])
 
   return (
@@ -69,6 +82,7 @@ function App() {
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Room" component={Room} />
           <Stack.Screen name="SetTurn" component={SetTurn} />
+          <Stack.Screen name="Field" component={Field} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

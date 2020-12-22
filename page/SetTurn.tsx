@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Image, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableHighlight, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import CARD_DICTIONARY from '../common/CardDictionary';
+import { CustomButton } from '../component/CustumButton'
+import store from '../redux';
 
 export default function SetTurn() {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
@@ -12,6 +14,8 @@ export default function SetTurn() {
   const [usedMana, setUsedMana] = React.useState(
     roomInfo.player1 === userId ? player1.mp : player2.mp,
   );
+  const [isSet, setIsSet] = React.useState(false)
+  const socketServer = store.getState().Socket.socketServer
   function checkHand(card: any) {
     for (let i = 0; i < hand.length; i++) {
       if (hand[i].id === card.id) {
@@ -20,6 +24,12 @@ export default function SetTurn() {
     }
     return false;
   }
+  function emitSetTurn() {
+    socketServer.emit('setTurn', roomInfo.id, userId, hand);
+  }
+  // function emitHand() {
+  //   socketServer.emit('setHand', roomInfo.id, userId, hand)
+  // }
 
   return (
     <View style={style.container}>
@@ -96,7 +106,7 @@ export default function SetTurn() {
           <TouchableHighlight
             key={id}
             onPress={() => {
-              if(card.type !== 'NONE') {
+              if(card.type !== 'NONE' && !isSet) {
                 hand[id] = CARD_DICTIONARY.NONE;
                 setHand(hand.slice(0, 3))
                 setUsedMana(usedMana + card.cost);
@@ -109,6 +119,24 @@ export default function SetTurn() {
           </TouchableHighlight>
         ))}
       </View>
+      {!isSet ? (
+          <CustomButton
+            title='준비완료'
+            onPress={() => {
+              for(let e in hand) {
+                if(hand[e].type === 'NONE') {
+                  Alert.alert('카드 세장을 선택해주세요.')
+                  return;
+                }
+              }
+              // setIsSet(true)
+              emitSetTurn()
+            }}
+            style={{ margin: 10, borderWidth: 1, width: 75, alignItems: 'center' }}
+          ></CustomButton>
+        ) : (
+          <Text style={{ margin: 10 }}>상대가 준비중입니다...</Text>
+        )}
     </View>
   );
 }
@@ -117,13 +145,15 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    alignItems:'center'
   },
   status: {
     flexDirection: 'row',
     marginTop: 30,
   },
   player1info: {
-    paddingHorizontal: 40,
+    // paddingHorizontal: 40,
+    alignItems: 'flex-start',
   },
   player2info: {
     width: 400,
