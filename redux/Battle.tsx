@@ -54,6 +54,28 @@ const initialState = {
   },
   player1: {},
   player2: {},
+  field: [
+    [
+      { effect: false },
+      { effect: false },
+      { effect: false },
+    ],
+    [
+      { effect: false },
+      { effect: false },
+      { effect: false },
+    ],
+    [
+      { effect: false },
+      { effect: false },
+      { effect: false },
+    ],
+    [
+      { effect: false },
+      { effect: false },
+      { effect: false },
+    ],
+  ],
 };
 
 export default function Battle(state: any = initialState, action: any) {

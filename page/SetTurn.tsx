@@ -33,22 +33,24 @@ export default function SetTurn() {
 
   return (
     <View style={style.container}>
-      <View style={style.status}>
-        <View style={style.player1info}>
-          <Text>NAME: {roomInfo.player1Character + `(${roomInfo.player1name})`}</Text>
-          <Text>HP: {player1.hp}</Text>
-          <Text>
-            MP: {roomInfo.player1 === userId ? `${usedMana}/` : null}{player1.mp}
-          </Text>
+      {roomInfo ? (
+        <View style={style.status}>
+          <View style={style.player1info}>
+            <Text>NAME: {roomInfo.player1Character + `(${roomInfo.player1name})`}</Text>
+            <Text>HP: {player1.hp}</Text>
+            <Text>
+              MP: {player1.mp}
+            </Text>
+          </View>
+          <View style={style.player2info}>
+            <Text>NAME: {roomInfo.player2Character + `(${roomInfo.player2name})`}</Text>
+            <Text>HP: {player2.hp}</Text>
+            <Text>
+              MP: {player2.mp}
+            </Text>
+          </View>
         </View>
-        <View style={style.player2info}>
-          <Text>NAME: {roomInfo.player1Character + `(${roomInfo.player1name})`}</Text>
-          <Text>HP: {player2.hp}</Text>
-          <Text>
-            MP: {roomInfo.player2 === userId ? `${usedMana}/` : null}{player1.mp}
-          </Text>
-        </View>
-      </View>
+       ) : null}
       <View style={style.deck}>
         {player1.deck.slice(0, 5).map((card:any, id: number) => (
           <TouchableHighlight

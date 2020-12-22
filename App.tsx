@@ -62,7 +62,6 @@ function App() {
     });
 
     socketServer.on('setTurn', (roomId: number, roomInfo: any) => {
-      console.log("set", roomInfo)
       if (
         store.getState().Socket.roomInfo &&
         roomId === store.getState().Socket.roomInfo.id
