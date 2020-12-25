@@ -9,6 +9,10 @@ export default function Field() {
   const player2 = useSelector((state: any) => state.Battle.player2)
   const [field, setField] = React.useState(store.getState().Battle.field);
 
+  React.useEffect(() => {
+    console.log("1",player1.hand,"2", player2.hand)
+  })
+
   return (
     <View style={style.container}>
       {roomInfo ? (

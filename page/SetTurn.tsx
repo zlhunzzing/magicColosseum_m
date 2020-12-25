@@ -9,8 +9,9 @@ export default function SetTurn() {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
-  const [hand, setHand] = React.useState([CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE])
   const userId = useSelector((state: any) => state.Auth.userId);
+  const deck = roomInfo.player1 === userId ? player1.deck : player2.deck
+  const [hand, setHand] = React.useState([CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE])
   const [usedMana, setUsedMana] = React.useState(
     roomInfo.player1 === userId ? player1.mp : player2.mp,
   );
@@ -25,11 +26,9 @@ export default function SetTurn() {
     return false;
   }
   function emitSetTurn() {
-    socketServer.emit('setTurn', roomInfo.id, userId, hand);
+    socketServer.emit('setHand', roomInfo.id, userId, hand)
+    socketServer.emit('setTurn', roomInfo.id, userId);
   }
-  // function emitHand() {
-  //   socketServer.emit('setHand', roomInfo.id, userId, hand)
-  // }
 
   return (
     <View style={style.container}>
@@ -52,7 +51,7 @@ export default function SetTurn() {
         </View>
        ) : null}
       <View style={style.deck}>
-        {player1.deck.slice(0, 5).map((card:any, id: number) => (
+        {deck.slice(0, 5).map((card:any, id: number) => (
           <TouchableHighlight
             key={id}
             onPress={() => {
@@ -78,7 +77,7 @@ export default function SetTurn() {
         ))}
       </View>
       <View style={style.deck}>
-        {player1.deck.slice(5, 10).map((card:any, id: number) => (
+        {deck.slice(5, 10).map((card:any, id: number) => (
           <TouchableHighlight
             key={id}
             onPress={() => {
@@ -131,7 +130,7 @@ export default function SetTurn() {
                   return;
                 }
               }
-              // setIsSet(true)
+              setIsSet(true)
               emitSetTurn()
             }}
             style={{ margin: 10, borderWidth: 1, width: 75, alignItems: 'center' }}

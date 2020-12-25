@@ -61,6 +61,27 @@ function App() {
       }
     });
 
+    socketServer.on('setHand', (roomId: number, userId: number, hand: any) => {
+      if (
+        store.getState().Socket.roomInfo &&
+        roomId === store.getState().Socket.roomInfo.id
+      ) {
+        if (userId === store.getState().Socket.roomInfo.player1) {
+          store.dispatch(
+            battleActions.set_player1_hand({
+              hand: hand.slice(0, 3),
+            }),
+          );
+        } else {
+          store.dispatch(
+            battleActions.set_player2_hand({
+              hand: hand.slice(0, 3),
+            }),
+          );
+        }
+      }
+    });
+
     socketServer.on('setTurn', (roomId: number, roomInfo: any) => {
       if (
         store.getState().Socket.roomInfo &&
