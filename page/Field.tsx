@@ -39,20 +39,32 @@ export default function Field() {
                     key={roomId}
                     style={style.room}
                   >
-                    {player1.position.x === floorId &&
-                      player1.position.y === roomId ? (
-                        <Image
-                          style={{ width: 40, height: 40 }}
-                          source={require('../image/characterImg/Seki.gif')}
-                        ></Image>
-                      ) : null}
-                      {player2.position.x === floorId &&
-                        player2.position.y === roomId ? (
+                    <View style={{ width: 60, alignItems: 'flex-start' }}>
+                      {player1.position.x === floorId &&
+                        player1.position.y === roomId ? (
                           <Image
                             style={{ width: 40, height: 40 }}
-                            source={require('../image/characterImg/Seki.gif')}
+                            source={
+                              player1.name === '세키'
+                              ? require('../image/characterImg/Seki.gif')
+                              : require('../image/characterImg/Reti.gif')
+                            }
                           ></Image>
                       ) : null}
+                      </View>
+                      <View style={{ width: 60, alignItems: 'flex-end' }}>
+                        {player2.position.x === floorId &&
+                          player2.position.y === roomId ? (
+                            <Image
+                              style={{ width: 40, height: 40 }}
+                              source={
+                                player2.name === '세키'
+                                ? require('../image/characterImg/Seki.gif')
+                                : require('../image/characterImg/Reti.gif')
+                              }
+                            ></Image>
+                        ) : null}
+                      </View>
                   </View>
                 ))}
               </View>
@@ -86,6 +98,8 @@ const style = StyleSheet.create({
     margin: 20,
   },
   room: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     borderWidth: 1,
     width: 145,
     height: 50
