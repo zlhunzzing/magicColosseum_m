@@ -2,16 +2,43 @@ import * as React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useSelector } from 'react-redux';
 import store from '../redux';
+import { CARD_DICTIONARY } from '../common/CardDictionary';
+import * as battleActions from '../redux/Battle'
 
 export default function Field() {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
   const [field, setField] = React.useState(store.getState().Battle.field);
+  function cardAction(
+    card: any,
+    user: any,
+    userActing: any,
+    // target: any,this.player1Acting
+    // targetActing: any,
+  ) {
+    console.log("U",user)
+    switch (card.type) {
+      case CARD_DICTIONARY.UP.type:
+        console.log("U2",user)
+        user.position.y = user.position.y - 1;
+        console.log("U3",user)
+        if (user.position.y < 0) user.position.y = 0;
+        userActing(user)
+        break;
+    }
+  }
+  function player1Acting(patch: any) {
+    store.dispatch(battleActions.set_player1({ player1: patch }))
+  }
+  // function player2Acting(patch: any) {
+  //   store.dispatch(battleActions.set_player2({ player2: patch }))
+  // }
 
   React.useEffect(() => {
-    console.log("1",player1.hand,"2", player2.hand)
-  })
+    console.log("Action")
+    cardAction(player1.hand[0], player1, player1Acting)
+  }, [])
 
   return (
     <View style={style.container}>

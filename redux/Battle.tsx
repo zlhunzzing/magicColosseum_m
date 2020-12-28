@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import { Card } from '../common/interface/BattleInterface';
+// import { Card } from '../common/interface/BattleInterface';
 import CARD_DICTIONARY, {
   Deck1,
   Seki_Deck,
@@ -11,6 +11,8 @@ const SELECT_PLAYER1 = 'App/Battle/SELECT_PLAYER1';
 const SELECT_PLAYER2 = 'App/Battle/SELECT_PLAYER2';
 const SET_PLAYER1_HAND = 'App/Battle/SET_PLAYER1_HAND';
 const SET_PLAYER2_HAND = 'App/Battle/SET_PLAYER2_HAND';
+const SET_PLAYER1 = 'App/Battle/SET_PLAYER1'
+const SET_PLAYER2 = 'App/Battle/SET_PLAYER2'
 
 export const select_player1 = createAction(SELECT_PLAYER1);
 // payload: {name: Seki <string> }
@@ -20,6 +22,10 @@ export const set_player1_hand = createAction(SET_PLAYER1_HAND);
 // payload: {hand: [{},{},{}] Array<Card> }
 export const set_player2_hand = createAction(SET_PLAYER2_HAND);
 // payload: {hand: [{},{},{}] Array<Card> }
+export const set_player1 = createAction(SET_PLAYER1)
+// payload: {player1 <Instance: class Character> }
+export const set_player2 = createAction(SET_PLAYER2)
+// payload: {player2 <Instance: class Character> }
 
 const initialState = {
   Instance: class Character {
@@ -28,11 +34,11 @@ const initialState = {
     mp: number;
     def: number;
     deck: Array<object>;
-    hand: Array<Card>;
+    hand: Array<any>;
     position: object;
     isAction: boolean;
 
-    constructor(name: string, deck: Array<Card>) {
+    constructor(name: string, deck: Array<any>) {
       this.name = name;
       this.hp = 100;
       this.mp = 100;
@@ -112,6 +118,16 @@ export default function Battle(state: any = initialState, action: any) {
           ...state.player2,
           hand: action.payload.hand,
         },
+      };
+    case SET_PLAYER1:
+      return {
+        ...state,
+        player1: { ...action.payload.player1 },
+      };
+    case SET_PLAYER2:
+      return {
+        ...state,
+        player2: { ...action.payload.player2 },
       };
     default:
       return state;

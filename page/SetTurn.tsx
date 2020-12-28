@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import CARD_DICTIONARY from '../common/CardDictionary';
 import { CustomButton } from '../component/CustumButton'
 import store from '../redux';
+import { imageRequires } from '../common/CardDictionary'
 
 export default function SetTurn() {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
@@ -71,7 +72,9 @@ export default function SetTurn() {
           >
           <Image
             style={checkHand(card) ? { ...style.card, opacity: 0 } : style.card}
-            source={usedMana < card.cost ? card.darkImage : card.image}
+            source={usedMana < card.cost
+              ? (imageRequires as any)[card.darkImage]
+              : (imageRequires as any)[card.image]}
           ></Image>
         </TouchableHighlight>
         ))}
@@ -97,7 +100,9 @@ export default function SetTurn() {
           >
             <Image
               style={checkHand(card) ? { ...style.card, opacity: 0 } : style.card}
-              source={usedMana < card.cost ? card.darkImage : card.image}
+              source={usedMana < card.cost
+                ? (imageRequires as any)[card.darkImage]
+                : (imageRequires as any)[card.image]}
             ></Image>
           </TouchableHighlight>
         ))}
@@ -115,7 +120,7 @@ export default function SetTurn() {
           }}>
             <Image
               style={style.card}
-              source={card.image}
+              source={(imageRequires as any)[card.image]}
             ></Image>
           </TouchableHighlight>
         ))}
