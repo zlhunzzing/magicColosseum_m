@@ -4,12 +4,44 @@ import { useSelector } from 'react-redux';
 import store from '../redux';
 import { CARD_DICTIONARY } from '../common/CardDictionary';
 import * as battleActions from '../redux/Battle'
+import { PhaseNumber } from '../common/interface/BattleInterface';
 
 export default function Field() {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
   const [field, setField] = React.useState(store.getState().Battle.field);
+  function phase(phaseNumber: PhaseNumber) {
+    let firstUser
+    let lastUser: any
+    let firstActing
+    let lastActing: any
+    if (player1.hand[phaseNumber].speed <= player2.hand[phaseNumber].speed) {
+      firstUser = player1
+      lastUser = player2
+      firstActing = player1Acting
+      lastActing = player2Acting
+    } else {
+      firstUser = player2
+      lastUser = player1
+      firstActing = player2Acting
+      lastActing = player1Acting
+    }
+    cardAction(
+      firstUser.hand[phaseNumber],
+      firstUser,
+      firstActing
+    );
+    setTimeout(
+      () =>
+        cardAction(
+          lastUser.hand[phaseNumber],
+          lastUser,
+          lastActing
+        ),
+      1000,
+    );
+  }
   function cardAction(
     card: any,
     user: any,
@@ -17,13 +49,31 @@ export default function Field() {
     // target: any,this.player1Acting
     // targetActing: any,
   ) {
-    console.log("U",user)
     switch (card.type) {
       case CARD_DICTIONARY.UP.type:
-        console.log("U2",user)
         user.position.y = user.position.y - 1;
-        console.log("U3",user)
         if (user.position.y < 0) user.position.y = 0;
+        userActing(user)
+        break;
+    }
+    switch (card.type) {
+      case CARD_DICTIONARY.DOWN.type:
+        user.position.y = user.position.y + 1;
+        if (user.position.y > 2) user.position.y = 2;
+        userActing(user)
+        break;
+    }
+    switch (card.type) {
+      case CARD_DICTIONARY.LEFT.type:
+        user.position.x = user.position.x - 1;
+        if (user.position.x < 0) user.position.x = 0;
+        userActing(user)
+        break;
+    }
+    switch (card.type) {
+      case CARD_DICTIONARY.RIGHT.type:
+        user.position.x = user.position.x + 1;
+        if (user.position.x > 3) user.position.x = 3;
         userActing(user)
         break;
     }
@@ -31,13 +81,12 @@ export default function Field() {
   function player1Acting(patch: any) {
     store.dispatch(battleActions.set_player1({ player1: patch }))
   }
-  // function player2Acting(patch: any) {
-  //   store.dispatch(battleActions.set_player2({ player2: patch }))
-  // }
+  function player2Acting(patch: any) {
+    store.dispatch(battleActions.set_player2({ player2: patch }))
+  }
 
   React.useEffect(() => {
-    console.log("Action")
-    cardAction(player1.hand[0], player1, player1Acting)
+    phase(PhaseNumber.FIRST)
   }, [])
 
   return (

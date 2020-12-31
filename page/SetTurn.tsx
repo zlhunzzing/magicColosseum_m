@@ -135,7 +135,7 @@ export default function SetTurn() {
                   return;
                 }
               }
-              setIsSet(true)
+              // setIsSet(true)
               emitSetTurn()
             }}
             style={{ margin: 10, borderWidth: 1, width: 75, alignItems: 'center' }}

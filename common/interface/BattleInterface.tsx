@@ -14,19 +14,19 @@ export interface Card {
   speed: number;
   cost: number;
   power: number;
-  range: Array<Array<number>>;
+  range: string;
   position: string;
   image: string;
   darkImage: string;
 }
 
-// export enum PhaseNumber {
-//   FIRST = 0,
-//   MIDDLE = 1,
-//   LAST = 2,
-// }
+export enum PhaseNumber {
+  FIRST = 0,
+  MIDDLE = 1,
+  LAST = 2,
+}
 
-// export interface Position {
-//   x: number;
-//   y: number;
-// }
+export interface Position {
+  x: number;
+  y: number;
+}
