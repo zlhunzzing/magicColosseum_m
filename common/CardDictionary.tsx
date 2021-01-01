@@ -55,7 +55,7 @@ export const imageRequires = {
   RETI_GUARD_ACTION: require('../image/actionImage/02_guard_action.png'),
 };
 
-const cardRanges = {
+export const cardRanges = {
   noneRange: [],
   self: [[0, 0]],
   allRange: [

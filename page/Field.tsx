@@ -5,6 +5,7 @@ import store from '../redux';
 import { CARD_DICTIONARY } from '../common/CardDictionary';
 import * as battleActions from '../redux/Battle'
 import { PhaseNumber } from '../common/interface/BattleInterface';
+import { cardRanges } from '../common/CardDictionary'
 
 export default function Field() {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
@@ -12,9 +13,9 @@ export default function Field() {
   const player2 = useSelector((state: any) => state.Battle.player2)
   const [field, setField] = React.useState(store.getState().Battle.field);
   function phase(phaseNumber: PhaseNumber) {
-    let firstUser
+    let firstUser: any
     let lastUser: any
-    let firstActing
+    let firstActing: any
     let lastActing: any
     if (player1.hand[phaseNumber].speed <= player2.hand[phaseNumber].speed) {
       firstUser = player1
@@ -30,14 +31,18 @@ export default function Field() {
     cardAction(
       firstUser.hand[phaseNumber],
       firstUser,
-      firstActing
+      firstActing,
+      lastUser,
+      lastActing
     );
     setTimeout(
       () =>
         cardAction(
           lastUser.hand[phaseNumber],
           lastUser,
-          lastActing
+          lastActing,
+          firstUser,
+          firstActing
         ),
       1000,
     );
@@ -46,8 +51,8 @@ export default function Field() {
     card: any,
     user: any,
     userActing: any,
-    // target: any,this.player1Acting
-    // targetActing: any,
+    eneme: any,
+    enemeActing: any,
   ) {
     switch (card.type) {
       case CARD_DICTIONARY.UP.type:
@@ -55,26 +60,33 @@ export default function Field() {
         if (user.position.y < 0) user.position.y = 0;
         userActing(user)
         break;
-    }
-    switch (card.type) {
       case CARD_DICTIONARY.DOWN.type:
         user.position.y = user.position.y + 1;
         if (user.position.y > 2) user.position.y = 2;
         userActing(user)
         break;
-    }
-    switch (card.type) {
       case CARD_DICTIONARY.LEFT.type:
         user.position.x = user.position.x - 1;
         if (user.position.x < 0) user.position.x = 0;
         userActing(user)
         break;
-    }
-    switch (card.type) {
       case CARD_DICTIONARY.RIGHT.type:
         user.position.x = user.position.x + 1;
         if (user.position.x > 3) user.position.x = 3;
         userActing(user)
+        break;
+      case 'ATT':
+        user.mp = user.mp - card.cost;
+        userActing(user)
+        const cardRange = (cardRanges as any)[card.range]
+        for(let i = 0; i < cardRange.length; i++) {
+          let targetX = user.position.x + cardRange[i][0];
+          let targetY = user.position.y + cardRange[i][1];
+          if(targetX === eneme.position.x && targetY === eneme.position.y) {
+            eneme.hp = eneme.hp - (card.power - eneme.def)
+            enemeActing(eneme)
+          }
+        }
         break;
     }
   }
