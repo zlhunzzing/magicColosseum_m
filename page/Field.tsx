@@ -79,14 +79,24 @@ export default function Field() {
         user.mp = user.mp - card.cost;
         userActing(user)
         const cardRange = (cardRanges as any)[card.range]
-        for(let i = 0; i < cardRange.length; i++) {
+        for (let i = 0; i < cardRange.length; i++) {
           let targetX = user.position.x + cardRange[i][0];
           let targetY = user.position.y + cardRange[i][1];
-          if(targetX === eneme.position.x && targetY === eneme.position.y) {
+          if (targetX === eneme.position.x && targetY === eneme.position.y) {
             eneme.hp = eneme.hp - (card.power - eneme.def)
+            eneme.def = 0
             enemeActing(eneme)
           }
         }
+        break;
+      case CARD_DICTIONARY.MANA_UP.type:
+        user.mp += 15
+        if (user.mp >= 100) user.mp = 100;
+        userActing(user)
+        break;
+      case CARD_DICTIONARY.GUARD.type:
+        user.def = 15
+        userActing(user)
         break;
     }
   }
