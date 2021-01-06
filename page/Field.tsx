@@ -12,6 +12,29 @@ export default function Field() {
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
   const [field, setField] = React.useState(store.getState().Battle.field);
+  function turn() {
+    let firstPhase = false;
+    let middlePhase = false;
+    let lastPhase = false;
+    // let continueTurn = false;
+
+    firstPhase = !firstPhase;
+    if (firstPhase) phase(PhaseNumber.FIRST)
+
+    setTimeout(() => {
+      middlePhase = true // turnCheck
+      if(middlePhase) {
+        phase(PhaseNumber.MIDDLE)
+      }
+    }, 2000)
+
+    setTimeout(() => {
+      lastPhase = true // turnCheck
+      if(lastPhase) {
+        phase(PhaseNumber.LAST)
+      }
+    }, 4000)
+  }
   function phase(phaseNumber: PhaseNumber) {
     let firstUser: any
     let lastUser: any
@@ -108,7 +131,7 @@ export default function Field() {
   }
 
   React.useEffect(() => {
-    phase(PhaseNumber.FIRST)
+    turn()
   }, [])
 
   return (
@@ -205,5 +228,5 @@ const style = StyleSheet.create({
     borderWidth: 1,
     width: 145,
     height: 50
-  }
+  },
 });
