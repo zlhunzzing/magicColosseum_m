@@ -1,39 +1,66 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Modal } from 'react-native';
 import { useSelector } from 'react-redux';
 import store from '../redux';
 import { CARD_DICTIONARY } from '../common/CardDictionary';
 import * as battleActions from '../redux/Battle'
 import { PhaseNumber } from '../common/interface/BattleInterface';
 import { cardRanges } from '../common/CardDictionary'
+import { CustomButton } from '../component/CustumButton'
 
-export default function Field() {
+export default function Field({ navigation }: any) {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
   const [field, setField] = React.useState(store.getState().Battle.field);
+  const [modalVisible, setModalVisible] = React.useState(false)
+  const [modalText, setModalText] = React.useState('')
   function turn() {
     let firstPhase = false;
     let middlePhase = false;
     let lastPhase = false;
-    // let continueTurn = false;
+    let continueTurn = false;
 
     firstPhase = !firstPhase;
     if (firstPhase) phase(PhaseNumber.FIRST)
 
     setTimeout(() => {
-      middlePhase = true // turnCheck
-      if(middlePhase) {
+      middlePhase = turnCheck()
+      if (middlePhase) {
         phase(PhaseNumber.MIDDLE)
       }
     }, 2000)
 
     setTimeout(() => {
-      lastPhase = true // turnCheck
-      if(lastPhase) {
+      lastPhase = turnCheck()
+      if (lastPhase) {
         phase(PhaseNumber.LAST)
+
       }
     }, 4000)
+
+    setTimeout(() => {
+      continueTurn = turnCheck()
+      if (continueTurn) navigation.navigate('SetTurn')
+    }, 6000)
+  }
+  function turnCheck() {
+    if(player1.hp <= 0 && player2.hp <= 0) {
+      setModalText('무승부')
+      setModalVisible(true)
+      return false
+    }
+    if(player1.hp <= 0) {
+      setModalText(`${player1.name} 승리`)
+      setModalVisible(true)
+      return false
+    }
+    if(player2.hp <= 0) {
+      setModalText(`${player2.name} 승리`)
+      setModalVisible(true)
+      return false
+    }
+    return true
   }
   function phase(phaseNumber: PhaseNumber) {
     let firstUser: any
@@ -196,6 +223,27 @@ export default function Field() {
             )) 
           : null}
       </View>
+
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => {
+          alert("창이 열려있습니다.");
+        }}
+      >
+        <View style={style.centeredView}>
+          <View style={style.modalView}>
+            <Text>{modalText}</Text>
+            <CustomButton
+              title='확인'
+              onPress={() => {
+                // setModalVisible(false)
+                navigation.navigate('Room')
+              }}
+            ></CustomButton>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -228,5 +276,25 @@ const style = StyleSheet.create({
     borderWidth: 1,
     width: 145,
     height: 50
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
 });
