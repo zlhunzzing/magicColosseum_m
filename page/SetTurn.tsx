@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Image, TouchableHighlight, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableHighlight, Alert, BackHandler } from 'react-native';
 import { useSelector } from 'react-redux';
 import CARD_DICTIONARY from '../common/CardDictionary';
 import { CustomButton } from '../component/CustumButton'
@@ -30,6 +30,12 @@ export default function SetTurn() {
     socketServer.emit('setHand', roomInfo.id, userId, hand)
     socketServer.emit('setTurn', roomInfo.id, userId);
   }
+
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return false
+    })
+  })
 
   return (
     <View style={style.container}>

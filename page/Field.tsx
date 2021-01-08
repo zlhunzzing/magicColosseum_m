@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Image, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, Modal, BackHandler } from 'react-native';
 import { useSelector } from 'react-redux';
 import store from '../redux';
 import { CARD_DICTIONARY } from '../common/CardDictionary';
@@ -158,6 +158,10 @@ export default function Field({ navigation }: any) {
   }
 
   React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return false
+    })
+    
     turn()
   }, [])
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, Text, Image } from 'react-native';
+import { View, StyleSheet, Text, Image, BackHandler, Modal } from 'react-native';
 import { useSelector } from 'react-redux';
 import store from '../redux';
 import * as socketActions from '../redux/Socket'
@@ -13,6 +13,7 @@ export default function Room({ route, navigation }: any) {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const [character, setCharacter] = React.useState('');
   const [isReady, setIsReady] = React.useState(false)
+  const [modalVisible, setModalVisible] = React.useState(false)
 
   function outRoom() {
     socketServer.emit('outRoom', roomId, userId);
@@ -37,6 +38,11 @@ export default function Room({ route, navigation }: any) {
   React.useEffect(() => {
     store.dispatch(socketActions.set_room_id({ roomId }))
     socketServer.emit('getRoomInfo', roomId, userId);
+
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      setModalVisible(true)
+      return true;
+    })
   }, [])
 
   return roomInfo ? (
@@ -150,6 +156,33 @@ export default function Room({ route, navigation }: any) {
           style={style.exit}
         ></CustomButton>
       </View>
+
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => {
+          setModalVisible(false)
+        }}
+      >
+        <View style={style.centeredView}>
+          <View style={style.modalView}>
+            <Text>방을 나가시겠습니까?</Text>
+            <CustomButton
+              title='예'
+              onPress={() => {
+                setModalVisible(false)
+                outRoom()
+              }}
+            ></CustomButton>
+            <CustomButton
+              title='아니오'
+              onPress={() => {
+                setModalVisible(false)
+              }}
+            ></CustomButton>
+          </View>
+        </View>
+      </Modal>
     </View>
   ) : (
     <Text>여기는 {roomId ? roomId: null}번방 입니다.</Text>
@@ -208,5 +241,25 @@ const style = StyleSheet.create({
     borderWidth: 2,
     width: 40,
     height: 40
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
 });
