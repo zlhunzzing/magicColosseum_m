@@ -1,19 +1,21 @@
 import * as React from 'react';
-import { View, StyleSheet, Text, Image, BackHandler, Modal } from 'react-native';
+import { View, StyleSheet, Text, Image, BackHandler, Modal, Button } from 'react-native';
 import { useSelector } from 'react-redux';
 import store from '../redux';
 import * as socketActions from '../redux/Socket'
 import { CustomButton } from '../component/CustumButton'
 import * as battleActions from '../redux/Battle';
+import { TextInput } from 'react-native-gesture-handler';
 
 export default function Room({ route, navigation }: any) {
   const socketServer = store.getState().Socket.socketServer
   const roomId = route.params[0];
   const userId = useSelector((state: any) => state.Auth.userId);
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
+  const [modalVisible, setModalVisible] = React.useState(false)
   const [character, setCharacter] = React.useState('');
   const [isReady, setIsReady] = React.useState(false)
-  const [modalVisible, setModalVisible] = React.useState(false)
+  const [content, setContent] = React.useState('')
 
   function outRoom() {
     socketServer.emit('outRoom', roomId, userId);
@@ -34,6 +36,15 @@ export default function Room({ route, navigation }: any) {
   function gamestart() {
     socketServer.emit('gamestart', roomId, userId);
   }
+  // function sendMessage() {
+  //   let username
+  //   if(roomInfo.player1 === userId) username = roomInfo.player1name
+  //   if(roomInfo.player2 === userId) username = roomInfo.player2name
+  //   socketServer.emit('sendMessage', roomId, content, username);
+  //   setContent('');
+  //   // const el = document.querySelector('.inputReset') as HTMLElement;
+  //   // el.click();
+  // }
 
   React.useEffect(() => {
     store.dispatch(socketActions.set_room_id({ roomId }))
@@ -131,30 +142,46 @@ export default function Room({ route, navigation }: any) {
         </View>
       </View>
       <View style={style.halfContainer}>
-        <CustomButton
-          title={roomInfo.host === userId
-            ? '게임시작'
-            : isReady
-              ? '준비해제'
-              : '준비하기'}
-          onPress={() => {
-            if (character) {
-              if (roomInfo.host === userId) {
-                gamestart();
-              } else {
-                ready();
-              }
-            } else {
-              alert('캐릭터를 선택해주세요.');
-            }
+        <View style={style.chatBar}>
+        <View style={style.chatBox}></View>
+          <TextInput
+          style={style.chatInput}
+          onChangeText={(content) => {
+            setContent(content)
           }}
-          style={style.exit}
-        ></CustomButton>
-        <CustomButton
-          title="방나가기"
-          onPress={() => outRoom()}
-          style={style.exit}
-        ></CustomButton>
+          ></TextInput>
+        </View>
+          <CustomButton
+            title="입력"
+            // onPress={() => sendMessage()}
+            style={style.chatInputBtn}
+          ></CustomButton>
+          <View>
+          <CustomButton
+            title={roomInfo.host === userId
+              ? '게임시작'
+              : isReady
+                ? '준비해제'
+                : '준비하기'}
+            onPress={() => {
+              if (character) {
+                if (roomInfo.host === userId) {
+                  gamestart();
+                } else {
+                  ready();
+                }
+              } else {
+                alert('캐릭터를 선택해주세요.');
+              }
+            }}
+            style={style.exit}
+          ></CustomButton>
+          <CustomButton
+            title="방나가기"
+            onPress={() => outRoom()}
+            style={style.exit}
+          ></CustomButton>
+        </View>
       </View>
 
       <Modal
@@ -203,7 +230,7 @@ const style = StyleSheet.create({
   halfContainer: {
     flex: 1,
     width: 450,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   roomInfo: {
     color: 'black',
@@ -216,7 +243,6 @@ const style = StyleSheet.create({
     borderWidth: 1,
     width: 110,
     height: 130,
-
   },
   userInfo: {
     color: 'black',
@@ -224,10 +250,10 @@ const style = StyleSheet.create({
   exit: {
     borderWidth: 1,
     margin: 10,
-    width: 100,
-    height: 60,
+    width: 80,
+    height: 40,
     alignItems: 'center',
-    backgroundColor: 'gray'
+    backgroundColor: 'gray',
   },
   select: {
     alignItems: 'center',
@@ -262,4 +288,28 @@ const style = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5
   },
+  chatBar: {
+    margin: 10,
+    borderWidth: 1,
+    width: 300,
+    height: 100
+  },
+  chatBox: {
+    width: 300,
+    height: 75,
+    borderBottomWidth: 1,
+  },
+  chatInput: {
+    textAlignVertical: 'top',
+    width: 298,
+    height: 23,
+    padding: 5,
+    backgroundColor: 'rgb(245, 245, 245)'
+  },
+  chatInputBtn: {
+    borderWidth: 1,
+    marginTop: 10,
+    width: 30,
+    height: 100
+  }
 });
