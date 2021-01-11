@@ -92,6 +92,23 @@ function App() {
         }
       }
     });
+    
+    socketServer.on('sendMessage', (roomId: number, content: string, username: string) => {
+      if (
+        store.getState().Socket.roomInfo &&
+        store.getState().Socket.roomInfo.id === Number(roomId)
+      ) {
+        const message = {
+          id: store.getState().Socket.messageId,
+          message: content,
+          username
+        }
+        const messages = store.getState().Socket.messages;
+        messages.unshift(message)
+        store.dispatch(socketActions.set_messages({ messages: messages.slice() }))
+        store.dispatch(socketActions.add_message_id())
+      }
+    });
   }, [])
 
   return (

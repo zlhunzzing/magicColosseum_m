@@ -8,7 +8,9 @@ const SET_SOCKET_ID = 'App/Socket/SET_SOCKET_ID';
 const SET_ROOMS = 'App/Socket/SET_ROOMS';
 const SET_ROOM_ID = 'App/Socket/SET_ROOM_ID';
 const SET_ROOM_INFO = 'App/Socket/SET_ROOM_INFO';
-// const SET_IS_CHAT = 'App/Socket/SET_IS_CHAT';
+const SET_MESSAGES = 'App/Socket/SET_MESSAGES'
+const ADD_MESSAGE_ID = 'App/Socket/ADD_MESSAGE_ID'
+const RESET_MESSAGES = 'App/Socket/RESET_MESSAGES'
 
 export const set_socket_id = createAction(SET_SOCKET_ID);
 // payload: {socketId: }
@@ -18,7 +20,10 @@ export const set_room_id = createAction(SET_ROOM_ID);
 // paload: {roomId: }
 export const set_room_info = createAction(SET_ROOM_INFO);
 // // payload: {roomInfo: }
-// export const set_is_chat = createAction(SET_IS_CHAT);
+export const set_messages = createAction(SET_MESSAGES)
+// payload: [{ id: <number>, message: <string>, username: <string> }, ...]
+export const add_message_id = createAction(ADD_MESSAGE_ID)
+export const reset_messages = createAction(RESET_MESSAGES)
 
 const initialState = {
   socketServer: io(`http://${serverIp}`),
@@ -26,7 +31,8 @@ const initialState = {
   rooms: [],
   roomId: 0,
   roomInfo: null,
-  // isChat: true,
+  messages: [],
+  messageId: 0,
 };
 
 export default function Socket(state: any = initialState, action: any) {
@@ -51,11 +57,21 @@ export default function Socket(state: any = initialState, action: any) {
         ...state,
         roomInfo: action.payload.roomInfo,
       };
-    // case SET_IS_CHAT:
-    //   return {
-    //     ...state,
-    //     isChat: false,
-    //   };
+    case SET_MESSAGES:
+      return {
+        ...state,
+        messages: action.payload.messages,
+      };
+    case ADD_MESSAGE_ID:
+      return {
+        ...state,
+        messageId: state.messageId + 1
+      };  
+    case RESET_MESSAGES:
+      return {
+        ...state,
+        messages: []
+      };
     default:
       return state;
   }

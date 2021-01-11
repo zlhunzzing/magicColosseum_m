@@ -16,13 +16,10 @@ export default function Room({ route, navigation, props }: any) {
   const [character, setCharacter] = React.useState('');
   const [isReady, setIsReady] = React.useState(false)
   const [content, setContent] = React.useState('')
-
-  const dummy = React.useState([
-    { id: 1, message: "첫번째", username: '첫이름' },
-    { id: 2, message: "세번째", username: '두이름' },
-  ])[0]
+  const messages = useSelector((state: any) => state.Socket.messages)
 
   function outRoom() {
+    store.dispatch(socketActions.reset_messages())
     socketServer.emit('outRoom', roomId, userId);
     navigation.navigate('Home');
   }
@@ -41,13 +38,13 @@ export default function Room({ route, navigation, props }: any) {
   function gamestart() {
     socketServer.emit('gamestart', roomId, userId);
   }
-  // function sendMessage() {
-  //   let username
-  //   if(roomInfo.player1 === userId) username = roomInfo.player1name
-  //   if(roomInfo.player2 === userId) username = roomInfo.player2name
-  //   socketServer.emit('sendMessage', roomId, content, username);
-  //   setContent('');
-  // }
+  function sendMessage() {
+    let username
+    if(roomInfo.player1 === userId) username = roomInfo.player1name
+    if(roomInfo.player2 === userId) username = roomInfo.player2name
+    socketServer.emit('sendMessage', roomId, content, username);
+    // setContent('');
+  }
 
   React.useEffect(() => {
     store.dispatch(socketActions.set_room_id({ roomId }))
@@ -149,7 +146,7 @@ export default function Room({ route, navigation, props }: any) {
         <View style={style.chatBar}>
         <View style={style.chatBox}>
           <FlatList
-            data={dummy}
+            data={messages}
             keyExtractor={(item: any) => item.id.toString()}
             renderItem={({ item }: any) => (
               <Text>{`${item.username}: ${item.message}`}</Text>
@@ -165,8 +162,8 @@ export default function Room({ route, navigation, props }: any) {
         </View>
 
           <CustomButton
-            title="입력"
-            // onPress={() => sendMessage()}
+            title="채팅입력"
+            onPress={() => sendMessage()}
             style={style.chatInputBtn}
           ></CustomButton>
           <View>
@@ -314,7 +311,6 @@ const style = StyleSheet.create({
     padding: 3,
     overflow: 'hidden',
     flexDirection: 'row',
-    alignItems: 'flex-end'
   },
   chatInput: {
     textAlignVertical: 'top',
