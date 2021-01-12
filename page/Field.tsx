@@ -67,6 +67,10 @@ export default function Field({ navigation }: any) {
     let lastUser: any
     let firstActing: any
     let lastActing: any
+    player1.def = 0
+    player1Acting(player1)
+    player2.def = 0
+    player2Acting(player2)
     if (player1.hand[phaseNumber].speed <= player2.hand[phaseNumber].speed) {
       firstUser = player1
       lastUser = player2
@@ -134,7 +138,6 @@ export default function Field({ navigation }: any) {
           let targetY = user.position.y + cardRange[i][1];
           if (targetX === eneme.position.x && targetY === eneme.position.y) {
             eneme.hp = eneme.hp - (card.power - eneme.def)
-            eneme.def = 0
             enemeActing(eneme)
           }
         }
