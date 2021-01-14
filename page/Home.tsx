@@ -36,7 +36,11 @@ export default function Home({ navigation }: any) {
             key={room.id}
             title={`${room.id}번방/(${room.headcount}/${room.maxHeadcount})/${room.roomname}`}
             onPress={() => {
-              inRoom(room.id)
+              if (room.headcount < room.maxHeadcount) {
+                inRoom(room.id)
+              } else {
+                alert('방의 자리가 부족합니다.')
+              }
             }}
             style={style.room}
           ></CustomButton>
