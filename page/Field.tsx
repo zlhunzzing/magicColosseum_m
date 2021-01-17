@@ -12,7 +12,7 @@ export default function Field({ navigation }: any) {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
-  const [field, setField] = React.useState(store.getState().Battle.field);
+  const field = useSelector((state: any) => state.Battle.field)
   const [modalVisible, setModalVisible] = React.useState(false)
   const [modalText, setModalText] = React.useState('')
   function turn() {
@@ -35,7 +35,6 @@ export default function Field({ navigation }: any) {
       lastPhase = turnCheck()
       if (lastPhase) {
         phase(PhaseNumber.LAST)
-
       }
     }, 4000)
 
@@ -108,6 +107,7 @@ export default function Field({ navigation }: any) {
     eneme: any,
     enemeActing: any,
   ) {
+    store.dispatch(battleActions.clear_field())
     switch (card.type) {
       case CARD_DICTIONARY.UP.type:
         user.position.y = user.position.y - 1;
@@ -136,9 +136,20 @@ export default function Field({ navigation }: any) {
         for (let i = 0; i < cardRange.length; i++) {
           let targetX = user.position.x + cardRange[i][0];
           let targetY = user.position.y + cardRange[i][1];
-          if (targetX === eneme.position.x && targetY === eneme.position.y) {
-            eneme.hp = eneme.hp - (card.power - eneme.def)
-            enemeActing(eneme)
+          if (
+            targetX <= 3 &&
+            targetX >= 0 &&
+            targetY <= 2 &&
+            targetY >= 0 &&
+            field[targetX][targetY]
+          ) {
+            const field2 = store.getState().Battle.field.slice()
+            field2[targetX][targetY].effect = true;
+            store.dispatch(battleActions.set_field({ field: field2.slice() }))
+            if (targetX === eneme.position.x && targetY === eneme.position.y) {
+              eneme.hp = eneme.hp - (card.power - eneme.def)
+              enemeActing(eneme)
+            }
           }
         }
         break;
@@ -164,7 +175,6 @@ export default function Field({ navigation }: any) {
     BackHandler.addEventListener('hardwareBackPress', () => {
       return false
     })
-    
     turn()
   }, [])
 
@@ -196,7 +206,9 @@ export default function Field({ navigation }: any) {
                 {floor.map((room: any, roomId: number) => (
                   <View
                     key={roomId}
-                    style={style.room}
+                    style={room.effect
+                      ? { ...style.room, backgroundColor: 'coral' }
+                      : style.room}
                   >
                     <View style={{ width: 60, alignItems: 'flex-start' }}>
                       {player1.position.x === floorId &&

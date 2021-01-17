@@ -5,7 +5,6 @@ import CARD_DICTIONARY, {
   Seki_Deck,
   Reti_Deck,
 } from '../common/CardDictionary';
-import store from '../redux'
 
 const SELECT_PLAYER1 = 'App/Battle/SELECT_PLAYER1';
 const SELECT_PLAYER2 = 'App/Battle/SELECT_PLAYER2';
@@ -15,6 +14,8 @@ const SET_PLAYER1_HAND = 'App/Battle/SET_PLAYER1_HAND';
 const SET_PLAYER2_HAND = 'App/Battle/SET_PLAYER2_HAND';
 const SET_PLAYER1 = 'App/Battle/SET_PLAYER1'
 const SET_PLAYER2 = 'App/Battle/SET_PLAYER2'
+const SET_FIELD = 'App/Battle/SET_FIELD'
+const CLEAR_FIELD = 'App/Battle/CLEAR_FIELD'
 
 export const select_player1 = createAction(SELECT_PLAYER1);
 // payload: { name: Seki <string> }
@@ -31,6 +32,9 @@ export const set_player1 = createAction(SET_PLAYER1)
 // payload: { player1 <Instance: class Character> }
 export const set_player2 = createAction(SET_PLAYER2)
 // payload: { player2 <Instance: class Character> }
+export const set_field = createAction(SET_FIELD)
+// payload: { field <Field> }
+export const clear_field = createAction(CLEAR_FIELD)
 
 const initialState = {
   Instance: class Character {
@@ -149,8 +153,38 @@ export default function Battle(state: any = initialState, action: any) {
         ...state,
         player2: { ...action.payload.player2 },
       };
+    case SET_FIELD:
+      return {
+        ...state,
+        field: action.payload.field
+      }
+    case CLEAR_FIELD:
+      return {
+        ...state,
+        field: [
+          [
+            { effect: false },
+            { effect: false },
+            { effect: false },
+          ],
+          [
+            { effect: false },
+            { effect: false },
+            { effect: false },
+          ],
+          [
+            { effect: false },
+            { effect: false },
+            { effect: false },
+          ],
+          [
+            { effect: false },
+            { effect: false },
+            { effect: false },
+          ],
+        ]
+      };    
     default:
       return state;
-      
   }
 }
