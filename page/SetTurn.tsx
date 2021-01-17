@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View, Text, StyleSheet, Image, TouchableHighlight, Alert, BackHandler } from 'react-native';
 import { useSelector } from 'react-redux';
 import CARD_DICTIONARY from '../common/CardDictionary';
+import * as battleActions from '../redux/Battle'
 import { CustomButton } from '../component/CustumButton'
 import store from '../redux';
 import { imageRequires } from '../common/CardDictionary'
@@ -12,7 +13,7 @@ export default function SetTurn() {
   const player2 = useSelector((state: any) => state.Battle.player2)
   const userId = useSelector((state: any) => state.Auth.userId);
   const deck = roomInfo.player1 === userId ? player1.deck : player2.deck
-  const [hand, setHand] = React.useState([CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE])
+  const hand = useSelector((state: any) => state.Battle.hand)
   const [usedMana, setUsedMana] = React.useState(
     roomInfo.player1 === userId ? player1.mp : player2.mp,
   );
@@ -68,7 +69,7 @@ export default function SetTurn() {
                   !checkHand(card)
                 ) {
                   hand[e] = card;
-                  setHand(hand.slice(0, 3))
+                  store.dispatch(battleActions.set_hand({ hand: hand.slice() }))
                   setUsedMana(usedMana - card.cost);
                   break;
                 }
@@ -96,7 +97,7 @@ export default function SetTurn() {
                   !checkHand(card)
                 ) {
                   hand[e] = card;
-                  setHand(hand.slice(0, 3))
+                  store.dispatch(battleActions.set_hand({ hand: hand.slice() }))
                   setUsedMana(usedMana - card.cost);
                   break;
                 }
@@ -120,7 +121,7 @@ export default function SetTurn() {
             onPress={() => {
               if(card.type !== 'NONE' && !isSet) {
                 hand[id] = CARD_DICTIONARY.NONE;
-                setHand(hand.slice(0, 3))
+                store.dispatch(battleActions.set_hand({ hand: hand.slice() }))
                 setUsedMana(usedMana + card.cost);
               }
           }}>
