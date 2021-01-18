@@ -7,6 +7,7 @@ import * as battleActions from '../redux/Battle'
 import { PhaseNumber } from '../common/interface/BattleInterface';
 import { cardRanges } from '../common/CardDictionary'
 import { CustomButton } from '../component/CustumButton'
+import { imageRequires } from '../common/CardDictionary'
 
 export default function Field({ navigation }: any) {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
@@ -15,6 +16,11 @@ export default function Field({ navigation }: any) {
   const field = useSelector((state: any) => state.Battle.field)
   const [modalVisible, setModalVisible] = React.useState(false)
   const [modalText, setModalText] = React.useState('')
+  const [isUsing, setIsUsing] = React.useState([
+    [false, false],
+    [false, false],
+    [false, false],
+  ]);
   function turn() {
     let firstPhase = false;
     let middlePhase = false;
@@ -66,6 +72,24 @@ export default function Field({ navigation }: any) {
     let lastUser: any
     let firstActing: any
     let lastActing: any
+    const isUsings = [
+      [
+        [false, true],
+        [false, false],
+        [true, false],
+      ],
+      [
+        [false, false],
+        [true, true],
+        [false, false],
+      ],
+      [
+        [true, false],
+        [false, false],
+        [false, true],
+      ],
+    ];
+    setIsUsing(isUsings[phaseNumber].slice());
     player1.def = 0
     player1Acting(player1)
     player2.def = 0
@@ -241,6 +265,34 @@ export default function Field({ navigation }: any) {
               </View>
             )) 
           : null}
+      </View>
+
+      <View style={{ flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row', paddingRight: 20 }}>
+          {player1.hand
+            .slice()
+            .reverse()
+            .map((card: any, id: number) => (
+            <Image
+              key={id}
+              style={{ margin: 2, width: 50, height: 65 }}
+              source={isUsing[id][0]
+                ? (imageRequires as any)[card.image]
+                :  (imageRequires as any)[CARD_DICTIONARY.NONE.image]}
+            ></Image>
+          ))}
+        </View>
+        <View style={{ flexDirection: 'row'}}>
+          {player2.hand.map((card: any, id: number) => (
+            <Image
+              key={id}
+              style={{ margin: 2, width: 50, height: 65 }}
+              source={isUsing[id][1]
+                ? (imageRequires as any)[card.image]
+                :  (imageRequires as any)[CARD_DICTIONARY.NONE.image]}
+            ></Image>
+          ))}
+        </View>
       </View>
 
       <Modal
