@@ -19,6 +19,7 @@ export default function SetTurn() {
   );
   const [isSet, setIsSet] = React.useState(false)
   const socketServer = store.getState().Socket.socketServer
+  const field = useSelector((state: any) => state.Battle.field)
   function checkHand(card: any) {
     for (let i = 0; i < hand.length; i++) {
       if (hand[i].id === card.id) {
@@ -58,6 +59,7 @@ export default function SetTurn() {
           </View>
         </View>
        ) : null}
+
       <View style={style.deck}>
         {deck.slice(0, 5).map((card:any, id: number) => (
           <TouchableHighlight
@@ -114,42 +116,80 @@ export default function SetTurn() {
           </TouchableHighlight>
         ))}
       </View>
-      <View style={style.deck}>
-        {hand.map((card: any, id: number) => (
-          <TouchableHighlight
-            key={id}
-            onPress={() => {
-              if(card.type !== 'NONE' && !isSet) {
-                hand[id] = CARD_DICTIONARY.NONE;
-                store.dispatch(battleActions.set_hand({ hand: hand.slice() }))
-                setUsedMana(usedMana + card.cost);
-              }
-          }}>
-            <Image
-              style={style.card}
-              source={(imageRequires as any)[card.image]}
-            ></Image>
-          </TouchableHighlight>
-        ))}
+
+      <View style={style.bottomContainer}>
+        <View style={style.setTurn}>
+          <View style={{ alignItems: 'center' }}>
+            <View style={style.deck}>
+              {hand.map((card: any, id: number) => (
+                <TouchableHighlight
+                  key={id}
+                  onPress={() => {
+                    if(card.type !== 'NONE' && !isSet) {
+                      hand[id] = CARD_DICTIONARY.NONE;
+                      store.dispatch(battleActions.set_hand({ hand: hand.slice() }))
+                      setUsedMana(usedMana + card.cost);
+                    }
+                }}>
+                  <Image
+                    style={style.card}
+                    source={(imageRequires as any)[card.image]}
+                  ></Image>
+                </TouchableHighlight>
+              ))}
+            </View>
+            {!isSet ? (
+              <CustomButton
+                title='준비완료'
+                onPress={() => {
+                  for(let e in hand) {
+                    if(hand[e].type === 'NONE') {
+                      Alert.alert('카드 세장을 선택해주세요.')
+                      return;
+                    }
+                  }
+                  // setIsSet(true)
+                  emitSetTurn()
+                }}
+                style={{ margin: 5, borderWidth: 1, width: 75, alignItems: 'center' }}
+              ></CustomButton>
+            ) : (
+              <Text style={{ margin: 10 }}>상대가 준비중입니다...</Text>
+            )}
+          </View>
+        </View>
+
+        <View style={style.field}>
+          {field
+            ? field.map((floor: any, floorId: number) => (
+                <View key={floorId}>
+                  {floor.map((room: any, roomId: number) => (
+                    <View
+                      key={roomId}
+                      style={room.effect
+                        ? { ...style.room, backgroundColor: 'coral' }
+                        : style.room}
+                    >
+                      <View style={{ alignItems: 'flex-start' }}>
+                        {player1.position.x === floorId &&
+                          player1.position.y === roomId ? (
+                            <Text>{player1.name}</Text>
+                        ) : null}
+                        </View>
+                        <View style={{ alignItems: 'flex-end' }}>
+                          {player2.position.x === floorId &&
+                            player2.position.y === roomId ? (
+                              <Text>{player2.name}</Text>
+                          ) : null}
+                        </View>
+                    </View>
+                  ))}
+                </View>
+              ))
+            : null}
+        </View>
       </View>
-      {!isSet ? (
-          <CustomButton
-            title='준비완료'
-            onPress={() => {
-              for(let e in hand) {
-                if(hand[e].type === 'NONE') {
-                  Alert.alert('카드 세장을 선택해주세요.')
-                  return;
-                }
-              }
-              // setIsSet(true)
-              emitSetTurn()
-            }}
-            style={{ margin: 10, borderWidth: 1, width: 75, alignItems: 'center' }}
-          ></CustomButton>
-        ) : (
-          <Text style={{ margin: 10 }}>상대가 준비중입니다...</Text>
-        )}
+
     </View>
   );
 }
@@ -180,5 +220,26 @@ const style = StyleSheet.create({
     margin: 2,
     width: 50,
     height: 65,
-  }
+  },
+  bottomContainer: { 
+    marginTop: 15,
+    flexDirection: 'row',
+    width: 500
+  },
+  setTurn: {
+    alignItems: 'flex-end',
+    width: 330
+  },
+  field: {
+    flexDirection: 'row',
+    width: 200,
+    justifyContent: 'flex-end',
+  },
+  room: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderWidth: 0.5,
+    width: 40,
+    height: 30
+  },
 });
