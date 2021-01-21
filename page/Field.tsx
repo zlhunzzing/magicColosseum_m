@@ -16,6 +16,7 @@ export default function Field({ navigation }: any) {
   const field = useSelector((state: any) => state.Battle.field)
   const [modalVisible, setModalVisible] = React.useState(false)
   const [modalText, setModalText] = React.useState('')
+  const usingCard = useSelector((state: any) => state.Battle.usingCard);
   const [isUsing, setIsUsing] = React.useState([
     [false, false],
     [false, false],
@@ -132,6 +133,9 @@ export default function Field({ navigation }: any) {
     enemeActing: any,
   ) {
     store.dispatch(battleActions.clear_field())
+    store.dispatch(battleActions.set_using_card({ usingCard: card }))
+    eneme.isAction = false;
+    enemeActing(eneme)
     switch (card.type) {
       case CARD_DICTIONARY.UP.type:
         user.position.y = user.position.y - 1;
@@ -154,6 +158,7 @@ export default function Field({ navigation }: any) {
         userActing(user)
         break;
       case 'ATT':
+        user.isAction = true
         user.mp = user.mp - card.cost;
         userActing(user)
         const cardRange = (cardRanges as any)[card.range]
@@ -178,11 +183,13 @@ export default function Field({ navigation }: any) {
         }
         break;
       case CARD_DICTIONARY.MANA_UP.type:
+        user.isAction = true
         user.mp += 15
         if (user.mp >= 100) user.mp = 100;
         userActing(user)
         break;
       case CARD_DICTIONARY.GUARD.type:
+        user.isAction = true
         user.def = 15
         userActing(user)
         break;
@@ -238,11 +245,17 @@ export default function Field({ navigation }: any) {
                       {player1.position.x === floorId &&
                         player1.position.y === roomId ? (
                           <Image
-                            style={{ width: 40, height: 40 }}
+                            style={
+                              player1.isAction
+                                ? style.action
+                                : { width: 40, height: 40 }
+                            }
                             source={
-                              player1.name === '세키'
-                              ? require('../image/characterImg/Seki.gif')
-                              : require('../image/characterImg/Reti.gif')
+                              player1.isAction
+                                ? (imageRequires as any)[usingCard.actionImage]
+                                : player2.name === '세키'
+                                    ? require('../image/characterImg/Seki.gif')
+                                    : require('../image/characterImg/Reti.gif')
                             }
                           ></Image>
                       ) : null}
@@ -251,11 +264,17 @@ export default function Field({ navigation }: any) {
                         {player2.position.x === floorId &&
                           player2.position.y === roomId ? (
                             <Image
-                              style={{ width: 40, height: 40 }}
+                              style={
+                                player2.isAction
+                                  ? style.action
+                                  : { width: 40, height: 40 }
+                              }
                               source={
-                                player2.name === '세키'
-                                ? require('../image/characterImg/Seki.gif')
-                                : require('../image/characterImg/Reti.gif')
+                                player2.isAction
+                                  ? (imageRequires as any)[usingCard.actionImage]
+                                  : player2.name === '세키'
+                                    ? require('../image/characterImg/Seki.gif')
+                                    : require('../image/characterImg/Reti.gif')
                               }
                             ></Image>
                         ) : null}
@@ -347,6 +366,11 @@ const style = StyleSheet.create({
     borderWidth: 1,
     width: 145,
     height: 50
+  },
+  action: {
+    width: 70,
+    height: 70,
+    transform: [{ translateY: -40 }]
   },
   centeredView: {
     flex: 1,

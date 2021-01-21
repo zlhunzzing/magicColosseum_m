@@ -16,6 +16,7 @@ const SET_PLAYER1 = 'App/Battle/SET_PLAYER1'
 const SET_PLAYER2 = 'App/Battle/SET_PLAYER2'
 const SET_FIELD = 'App/Battle/SET_FIELD'
 const CLEAR_FIELD = 'App/Battle/CLEAR_FIELD'
+const SET_USING_CARD = 'App/Battle/SET_USING_CARD';
 
 export const select_player1 = createAction(SELECT_PLAYER1);
 // payload: { name: Seki <string> }
@@ -35,6 +36,8 @@ export const set_player2 = createAction(SET_PLAYER2)
 export const set_field = createAction(SET_FIELD)
 // payload: { field <Field> }
 export const clear_field = createAction(CLEAR_FIELD)
+export const set_using_card = createAction(SET_USING_CARD);
+// payload: {usingCard: <Card> }
 
 const initialState = {
   Instance: class Character {
@@ -77,6 +80,7 @@ const initialState = {
   player1: {},
   player2: {},
   hand: [CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE],
+  usingCard: null,
   field: [
     [
       { effect: false },
@@ -183,7 +187,12 @@ export default function Battle(state: any = initialState, action: any) {
             { effect: false },
           ],
         ]
-      };    
+      };
+    case SET_USING_CARD:
+      return {
+        ...state,
+        usingCard: action.payload.usingCard,
+      };
     default:
       return state;
   }

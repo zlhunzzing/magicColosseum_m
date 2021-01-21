@@ -166,9 +166,7 @@ export default function SetTurn() {
                   {floor.map((room: any, roomId: number) => (
                     <View
                       key={roomId}
-                      style={room.effect
-                        ? { ...style.room, backgroundColor: 'coral' }
-                        : style.room}
+                      style={style.room}
                     >
                       <View style={{ alignItems: 'flex-start' }}>
                         {player1.position.x === floorId &&
