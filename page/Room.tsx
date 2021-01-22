@@ -144,22 +144,22 @@ export default function Room({ route, navigation, props }: any) {
 
       <View style={style.halfContainer}>
         <View style={style.chatBar}>
-        <View style={style.chatBox}>
-          <FlatList
-            data={messages}
-            keyExtractor={(item: any) => item.id.toString()}
-            renderItem={({ item }: any) => (
-              <Text>{`${item.username}: ${item.message}`}</Text>
-            )}
-          ></FlatList>
-        </View>
-          <TextInput
-          style={style.chatInput}
-          onChangeText={(content) => {
-            setContent(content)
-          }}
-          ></TextInput>
-        </View>
+          <View style={style.chatBox}>
+            <FlatList
+              data={messages}
+              keyExtractor={(item: any) => item.id.toString()}
+              renderItem={({ item }: any) => (
+                <Text>{`${item.username}: ${item.message}`}</Text>
+              )}
+            ></FlatList>
+          </View>
+            <TextInput
+            style={style.chatInput}
+            onChangeText={(content) => {
+              setContent(content)
+            }}
+            ></TextInput>
+          </View>
 
           <CustomButton
             title="채팅입력"

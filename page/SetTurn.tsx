@@ -6,8 +6,9 @@ import * as battleActions from '../redux/Battle'
 import { CustomButton } from '../component/CustumButton'
 import store from '../redux';
 import { imageRequires } from '../common/CardDictionary'
+import { FlatList, TextInput } from 'react-native-gesture-handler';
 
-export default function SetTurn() {
+export default function SetTurn({ route }: any) {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
   const player1 = useSelector((state: any) => state.Battle.player1)
   const player2 = useSelector((state: any) => state.Battle.player2)
@@ -20,6 +21,9 @@ export default function SetTurn() {
   const [isSet, setIsSet] = React.useState(false)
   const socketServer = store.getState().Socket.socketServer
   const field = useSelector((state: any) => state.Battle.field)
+  const [content, setContent] = React.useState('')
+  const messages = useSelector((state: any) => state.Socket.messages)
+  const roomId = useSelector((state: any) => state.Socket.roomInfo.id);
   function checkHand(card: any) {
     for (let i = 0; i < hand.length; i++) {
       if (hand[i].id === card.id) {
@@ -31,6 +35,13 @@ export default function SetTurn() {
   function emitSetTurn() {
     socketServer.emit('setHand', roomInfo.id, userId, hand)
     socketServer.emit('setTurn', roomInfo.id, userId);
+  }
+  function sendMessage() {
+    let username
+    if(roomInfo.player1 === userId) username = roomInfo.player1name
+    if(roomInfo.player2 === userId) username = roomInfo.player2name
+    socketServer.emit('sendMessage', roomId, content, username);
+    // setContent('');
   }
 
   React.useEffect(() => {
@@ -118,6 +129,31 @@ export default function SetTurn() {
       </View>
 
       <View style={style.bottomContainer}>
+      <View style={style.chatBar}>
+          <View style={style.chatBox}>
+            <FlatList
+              data={messages}
+              keyExtractor={(item: any) => item.id.toString()}
+              renderItem={({ item }: any) => (
+                <Text>{`${item.username}: ${item.message}`}</Text>
+              )}
+            ></FlatList>
+          </View>
+            <TextInput
+            style={style.chatInput}
+            onChangeText={(content) => {
+              setContent(content)
+            }}
+            ></TextInput>
+          </View>
+          <CustomButton
+            title="입력"
+            onPress={() => sendMessage()}
+            style={style.chatInputBtn}
+          ></CustomButton>
+          <View>
+        </View>
+
         <View style={style.setTurn}>
           <View style={{ alignItems: 'center' }}>
             <View style={style.deck}>
@@ -187,7 +223,6 @@ export default function SetTurn() {
             : null}
         </View>
       </View>
-
     </View>
   );
 }
@@ -226,7 +261,7 @@ const style = StyleSheet.create({
   },
   setTurn: {
     alignItems: 'flex-end',
-    width: 330
+    width: 180
   },
   field: {
     flexDirection: 'row',
@@ -240,4 +275,29 @@ const style = StyleSheet.create({
     width: 40,
     height: 30
   },
+  chatBar: {
+    borderWidth: 0.5,
+    width: 120,
+    height: 100
+  },
+  chatBox: {
+    width: 120,
+    height: 75,
+    borderBottomWidth: 0.5,
+    padding: 3,
+    overflow: 'hidden',
+    flexDirection: 'row',
+  },
+  chatInput: {
+    textAlignVertical: 'top',
+    width: 118,
+    height: 23,
+    padding: 5,
+    backgroundColor: 'rgb(245, 245, 245)'
+  },
+  chatInputBtn: {
+    borderWidth: 0.5,
+    width: 30,
+    height: 100,
+  }
 });
