@@ -48,7 +48,13 @@ export default function Field({ navigation }: any) {
 
     setTimeout(() => {
       continueTurn = turnCheck()
-      if (continueTurn) navigation.navigate('SetTurn')
+      if (continueTurn) {
+        player1.mp += 15
+        player1Acting(player1)
+        player2.mp += 15
+        player2Acting(player2)
+        navigation.navigate('SetTurn')
+      }
     }, 6000)
   }
   function turnCheck() {
