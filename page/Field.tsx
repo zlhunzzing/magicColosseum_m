@@ -8,6 +8,7 @@ import { PhaseNumber } from '../common/interface/BattleInterface';
 import { cardRanges } from '../common/CardDictionary'
 import { CustomButton } from '../component/CustumButton'
 import { imageRequires } from '../common/CardDictionary'
+// import { Audio } from 'expo-av'
 
 export default function Field({ navigation }: any) {
   const roomInfo = useSelector((state: any) => state.Socket.roomInfo);
@@ -201,6 +202,33 @@ export default function Field({ navigation }: any) {
   function player2Acting(patch: any) {
     store.dispatch(battleActions.set_player2({ player2: patch }))
   }
+  // const [recording, setRecording] = React.useState<any>();
+  // async function startRecording() {
+  //   try {
+  //     console.log('Requesting permissions..');
+  //     await Audio.requestPermissionsAsync();
+  //     await Audio.setAudioModeAsync({
+  //       allowsRecordingIOS: true,
+  //       playsInSilentModeIOS: true,
+  //     }); 
+  //     console.log('Starting recording..');
+  //     const recording = new Audio.Recording();
+  //     await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+  //     await recording.startAsync(); 
+  //     setRecording(recording);
+  //     console.log('Recording started');
+  //   } catch (err) {
+  //     console.error('Failed to start recording', err);
+  //   }
+  // }
+
+  // async function stopRecording() {
+  //   console.log('Stopping recording..');
+  //   setRecording(undefined);
+  //   await recording.stopAndUnloadAsync();
+  //   const uri = recording.getURI(); 
+  //   console.log('Recording stopped and stored at', uri);
+  // }
 
   React.useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => {
@@ -208,6 +236,31 @@ export default function Field({ navigation }: any) {
     })
     turn()
   }, [])
+
+  // const [sound, setSound] = React.useState<any>()
+  // const playSound = async () => {
+  //   sound.playAsync();
+  // }
+  // React.useEffect(() => {
+  //   Audio.setAudioModeAsync({
+  //     allowsRecordingIOS: false,
+  //     interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+  //     playsInSilentModeIOS: true,
+  //     interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+  //     shouldDuckAndroid: true,
+  //     staysActiveInBackground: true,
+  //     playThroughEarpieceAndroid: true
+  //   })
+
+  //   const sound = new Audio.Sound()
+
+  //   const status = { shouldPlay: false }
+
+  //   sound.loadAsync(require('../assets/soso.mp3'))
+
+  //   setSound(sound)
+  // }, [])
+
 
   return (
     <View style={style.container}>
