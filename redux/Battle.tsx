@@ -9,6 +9,7 @@ import CARD_DICTIONARY, {
 const SELECT_PLAYER1 = 'App/Battle/SELECT_PLAYER1';
 const SELECT_PLAYER2 = 'App/Battle/SELECT_PLAYER2';
 const SET_HAND = 'App/Battle/SET_HAND';
+const SET_IS_TURN = 'App/Battle/SET_IS_TURN'
 const CLEAR_HAND = 'App/Battle/CLEAR_HAND';
 const SET_PLAYER1_HAND = 'App/Battle/SET_PLAYER1_HAND';
 const SET_PLAYER2_HAND = 'App/Battle/SET_PLAYER2_HAND';
@@ -24,6 +25,7 @@ export const select_player2 = createAction(SELECT_PLAYER2);
 // payload: { name: Seki <string> }
 export const set_hand = createAction(SET_HAND)
 // payload: { hand: [{},{},{}] Array<Card> }
+export const set_is_turn = createAction(SET_IS_TURN)
 export const clear_hand = createAction(CLEAR_HAND)
 export const set_player1_hand = createAction(SET_PLAYER1_HAND);
 // payload: { hand: [{},{},{}] Array<Card> }
@@ -79,6 +81,7 @@ const initialState = {
   },
   player1: {},
   player2: {},
+  isTurn: false,
   hand: [CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE, CARD_DICTIONARY.NONE],
   usingCard: null,
   field: [
@@ -121,6 +124,11 @@ export default function Battle(state: any = initialState, action: any) {
       return {
         ...state,
         hand: action.payload.hand,
+      }
+    case SET_IS_TURN:
+      return {
+        ...state,
+        isTurn: !state.isTurn,
       }
     case CLEAR_HAND:
       return {

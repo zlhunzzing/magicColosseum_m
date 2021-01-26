@@ -13,8 +13,8 @@ export default function Home({ navigation }: any) {
   const [modalVisible, setModalVisible] = React.useState(false)
   const [roomname, setRoomname] = React.useState('')
 
-  function createRoom() {
-    api.createRoom(roomname, navigation)
+  async function createRoom() {
+    await api.createRoom(roomname, navigation)
     socketServer.emit('rooms');
   }
   function inRoom(roomId: number) {

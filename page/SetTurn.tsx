@@ -18,7 +18,7 @@ export default function SetTurn({ route }: any) {
   const [usedMana, setUsedMana] = React.useState(
     roomInfo.player1 === userId ? player1.mp : player2.mp,
   );
-  const [isSet, setIsSet] = React.useState(false)
+  const isTurn = useSelector((state: any) => state.Battle.isTurn)
   const socketServer = store.getState().Socket.socketServer
   const field = useSelector((state: any) => state.Battle.field)
   const [content, setContent] = React.useState('')
@@ -161,7 +161,7 @@ export default function SetTurn({ route }: any) {
                 <TouchableHighlight
                   key={id}
                   onPress={() => {
-                    if(card.type !== 'NONE' && !isSet) {
+                    if(card.type !== 'NONE' && !isTurn) {  
                       hand[id] = CARD_DICTIONARY.NONE;
                       store.dispatch(battleActions.set_hand({ hand: hand.slice() }))
                       setUsedMana(usedMana + card.cost);
@@ -174,7 +174,7 @@ export default function SetTurn({ route }: any) {
                 </TouchableHighlight>
               ))}
             </View>
-            {!isSet ? (
+            {!isTurn ? (
               <CustomButton
                 title='준비완료'
                 onPress={() => {
@@ -184,7 +184,7 @@ export default function SetTurn({ route }: any) {
                       return;
                     }
                   }
-                  // setIsSet(true)
+                  store.dispatch(battleActions.set_is_turn())
                   emitSetTurn()
                 }}
                 style={{ margin: 5, borderWidth: 1, width: 75, alignItems: 'center' }}

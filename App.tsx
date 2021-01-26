@@ -90,6 +90,7 @@ function App() {
         if (roomInfo.player1set && roomInfo.player2set) {
           navigate('Field')
           store.dispatch(battleActions.clear_hand())
+          store.dispatch(battleActions.set_is_turn())
         }
       }
     });

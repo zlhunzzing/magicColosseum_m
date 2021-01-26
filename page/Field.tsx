@@ -312,7 +312,7 @@ export default function Field({ navigation }: any) {
                             source={
                               player1.isAction
                                 ? (imageRequires as any)[usingCard.actionImage]
-                                : player2.name === '세키'
+                                : player1.name === '세키'
                                     ? require('../image/characterImg/Seki.gif')
                                     : require('../image/characterImg/Reti.gif')
                             }
