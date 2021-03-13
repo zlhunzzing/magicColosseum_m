@@ -21,6 +21,7 @@ export default function Room({ route, navigation, props }: any) {
   function outRoom() {
     store.dispatch(socketActions.reset_messages())
     socketServer.emit('outRoom', roomId, userId);
+    socketServer.emit('rooms');
     navigation.navigate('Home');
   }
   function select(name: string) {
