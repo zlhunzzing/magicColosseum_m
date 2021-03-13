@@ -12,7 +12,7 @@ export default function Intro({ navigation }: any) {
   return (
     <View style={style.container}>
       <View style={style.header}>
-        <Text style={{ fontSize: 30 }}>검투의 요정</Text>
+        <Text style={{ fontSize: 30 }}>매직콜로세움</Text>
       </View>
       {!isSignup ? (
         <View style={style.form}>
