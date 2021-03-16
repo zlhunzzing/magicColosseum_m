@@ -51,6 +51,13 @@ export default function Room({ route, navigation, props }: any) {
     store.dispatch(socketActions.set_room_id({ roomId }))
     socketServer.emit('getRoomInfo', roomId, userId);
 
+    let prevInfo = store.getState().Socket.roomInfo
+    if (prevInfo) {
+      // setIsReady(false)
+      if (prevInfo.player1 === userId) setCharacter(prevInfo.player1Character)
+      if (prevInfo.player2 === userId) setCharacter(prevInfo.player1Character)
+    }
+
     BackHandler.addEventListener('hardwareBackPress', () => {
       setModalVisible(true)
       return true;
@@ -171,9 +178,13 @@ export default function Room({ route, navigation, props }: any) {
           <CustomButton
             title={roomInfo.host === userId
               ? '게임시작'
-              : isReady
-                ? '준비해제'
-                : '준비하기'}
+              : roomInfo.player1 === userId
+                ? roomInfo.player1Ready
+                  ? '준비해제'
+                  : '준비하기'
+                : roomInfo.player2Ready
+                  ? '준비해제'
+                  : '준비하기'}
             onPress={() => {
               if (character) {
                 if (roomInfo.host === userId) {

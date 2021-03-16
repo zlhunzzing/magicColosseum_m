@@ -50,8 +50,10 @@ export default function Field({ navigation }: any) {
       continueTurn = turnCheck()
       if (continueTurn) {
         player1.mp += 15
+        if (player1.mp > 100) player1.mp = 100
         player1Acting(player1)
         player2.mp += 15
+        if (player2.mp > 100) player2.mp = 100
         player2Acting(player2)
         navigation.navigate('SetTurn')
       }

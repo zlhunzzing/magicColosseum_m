@@ -46,19 +46,13 @@ function App() {
     });
 
     socketServer.on('gamestart', (roomInfo: any) => {
-      if (roomInfo.player1 === store.getState().Auth.userId) {
-        store.dispatch(
-          battleActions.select_player2({ name: roomInfo.player2Character }),
-        );
-        navigate('SetTurn');
-      }
-
-      if (roomInfo.player2 === store.getState().Auth.userId) {
-        store.dispatch(
-          battleActions.select_player1({ name: roomInfo.player1Character }),
-        );
-        navigate('SetTurn');
-      }
+      store.dispatch(
+        battleActions.select_player1({ name: roomInfo.player1Character }),
+      );
+      store.dispatch(
+        battleActions.select_player2({ name: roomInfo.player2Character }),
+      );
+      navigate('SetTurn');
     });
 
     socketServer.on('setHand', (roomId: number, userId: number, hand: any) => {
